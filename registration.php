@@ -1,13 +1,18 @@
 <?php
+
+session_start();
+
 require_once('classes/database.php');
 $con = new database();
 
 $sweetAlertConfig = ""; // Initialize SweetAlert script variable
 if (isset($_POST['register'])) {
+  
   $username = $_POST['username'];
   $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
   $firstname = $_POST['first_name'];
   $lastname = $_POST['last_name'];
+  
   $userID = $con->signupUser($firstname, $lastname, $username, $password);
 
   if ($userID){
@@ -41,8 +46,9 @@ if (isset($_POST['register'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Registration</title>
-  <link rel="stylesheet" href="./bootstrap-5.3.3-dist/css/bootstrap.css">
   <link rel="stylesheet" href="./package/dist/sweetalert2.css">
+  <link rel="stylesheet" href="./bootstrap-5.3.3-dist/css/bootstrap.css">
+
 </head>
 <body class="bg-light">
   <div class="container py-5">
@@ -67,10 +73,28 @@ if (isset($_POST['register'])) {
       <button type="submit" name='register' class="btn btn-primary w-100">Register</button>
     </form>
   </div>
+  
 
-  <?php echo $sweetAlertConfig; ?>
+  
 
-  <script src="./bootstrap-5.3.3-dist/js/bootstrap.js"></script>
   <script src="package/dist/sweetalert2.js"></script>
+  <script src="./bootstrap-5.3.3-dist/js/bootstrap.js"></script>
+
+  <?php if(isset($_SESSION['error'])): ?>
+    <script>
+      Swal.fire({
+        icon: 'error',
+        title: 'Oopps...',
+        text: '<?php echo addslashes($_SESSION['error']); ?>',
+        confirmButtonText: 'OK'
+      });
+    </script>
+    <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
+ 
+    <?php echo $sweetAlertConfig;  ?>
+
+
 </body>
 </html>

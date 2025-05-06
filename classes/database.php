@@ -8,4 +8,26 @@ class database{
             username: 'root',
             password: '');
     }
+    
+    function signupUser($firstname, $lastname, $username, $password){
+        
+        $con = $this->opencon();
+        
+        try{
+            $con->beginTransaction();
+
+            $stmt = $con->prepare("INSERT INTO Admin (admin_Fn, admin_LN, admin_username, admin_password) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$firstname, $lastname, $username, $password]);
+
+            $userID = $con->lastInsertId();
+            $con->commit();
+
+            return $userID;
+
+        }catch (PDOException $e){
+            $con->rollBack();
+            return false;
+        }
+
+    }
 }
